@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { APP_TITLE } from '../constants';
 
+
 const Navbar: React.FC = () => {
   const { isLoggedIn, logout } = useAuthStore();
   const user = JSON.parse(localStorage.getItem('user') || '{}');

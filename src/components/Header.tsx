@@ -37,7 +37,7 @@ const Header: React.FC = () => {
           </span>
           <button
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow-lg transition"
+            className="bg-black text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-800 transition"
           >
             Logout
           </button>

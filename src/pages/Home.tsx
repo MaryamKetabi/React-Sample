@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { APP_TITLE } from '../constants'; // استفاده از عنوان ثابت
+import { APP_TITLE } from '../constants';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();

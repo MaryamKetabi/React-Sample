@@ -14,18 +14,24 @@ interface AuthState {
 }
 
 const useAuthStore = create<AuthState>((set) => ({
-  isLoggedIn: false,
-  user: null,
+  isLoggedIn: !!localStorage.getItem('user'),
+  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
+  
   login: (username, role = 'User') => {
     const userData = { username, role };
     localStorage.setItem('user', JSON.stringify(userData));
     set({ isLoggedIn: true, user: userData });
   },
+
   logout: () => {
     localStorage.removeItem('user');
     set({ isLoggedIn: false, user: null });
   },
-  setUser: (user) => set({ isLoggedIn: true, user }),
+
+  setUser: (user) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    set({ isLoggedIn: true, user });
+  }
 }));
 
 export default useAuthStore;

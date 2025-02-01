@@ -14,8 +14,8 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data: RegisterForm) => {
-    login(data.username); // ارسال نام کاربری به تابع login
-    navigate('/dashboard'); // هدایت به داشبورد
+    login(data.username, 'User'); // ذخیره نام و نقش
+    navigate('/app/dashboard'); // هدایت به داشبورد
   };
 
   return (

@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
               <span className="font-semibold">{user.username || 'User'}</span>
               <button
                 onClick={logout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow-lg transition"
+                className="bg-black hover:bg-black text-white px-4 py-2 rounded shadow-lg transition"
               >
                 Logout
               </button>

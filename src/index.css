@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* استایل کلی صفحه */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f4f8;
+}

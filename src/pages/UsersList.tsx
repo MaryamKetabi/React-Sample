@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -18,25 +17,27 @@ const UsersList: React.FC = () => {
   const { data: users, isLoading, error } = useQuery<User[], Error>({
     queryKey: ['users'],
     queryFn: fetchUsers,
+    staleTime: 1000 * 60 * 5, // ✅ داده‌ها تا ۵ دقیقه تازه بمانند
+    gcTime: 1000 * 60 * 10,  // ✅ معادل جدید cacheTime (پاک‌سازی بعد از ۱۰ دقیقه)
   });
 
-  if (isLoading) return <p>Loading users...</p>;
+  if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading users</p>;
+  if (!users) return <p>No users found.</p>; // ✅ بررسی مقدار users قبل از map
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <div className="p-8 bg-gray-100 flex-grow">
       <h1 className="text-3xl font-bold mb-6">Users</h1>
-      <table className="table-auto border-collapse w-full bg-white rounded shadow-lg overflow-hidden">
+      <table className="table-auto border-collapse w-full bg-white rounded shadow-lg">
         <thead>
-          <tr className="bg-blue-500 text-white">
+          <tr className="bg-blue-200 text-blue-900">
             <th className="px-4 py-2">ID</th>
             <th className="px-4 py-2">Name</th>
             <th className="px-4 py-2">Email</th>
-            <th className="px-4 py-2">Details</th>
           </tr>
         </thead>
         <tbody>
-          {users?.map((user, index) => (
+          {users.map((user, index) => (
             <tr
               key={user.id}
               className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
@@ -44,14 +45,6 @@ const UsersList: React.FC = () => {
               <td className="border px-4 py-2 text-center">{user.id}</td>
               <td className="border px-4 py-2">{user.name}</td>
               <td className="border px-4 py-2">{user.email}</td>
-              <td className="border px-4 py-2 text-center">
-                <Link
-                  to={`/app/users/${user.id}`}
-                  className="text-blue-500 hover:underline"
-                >
-                  View Details
-                </Link>
-              </td>
             </tr>
           ))}
         </tbody>

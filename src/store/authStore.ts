@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
 interface User {
-  username: string;
+  email: string;
   role: string;
 }
 
 interface AuthState {
   isLoggedIn: boolean;
   user: User | null;
-  login: (username: string, role?: string) => void;
+  login: (email: string, role?: string) => void;
   logout: () => void;
   setUser: (user: User) => void;
 }
@@ -16,9 +16,9 @@ interface AuthState {
 const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: !!localStorage.getItem('user'),
   user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
-  
-  login: (username, role = 'User') => {
-    const userData = { username, role };
+
+  login: (email, role = 'User') => {
+    const userData = { email, role };
     localStorage.setItem('user', JSON.stringify(userData));
     set({ isLoggedIn: true, user: userData });
   },
@@ -31,7 +31,7 @@ const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => {
     localStorage.setItem('user', JSON.stringify(user));
     set({ isLoggedIn: true, user });
-  }
+  },
 }));
 
 export default useAuthStore;

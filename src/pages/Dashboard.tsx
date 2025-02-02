@@ -14,8 +14,11 @@ const Dashboard: React.FC = () => {
   const { data: stats, isLoading, error } = useQuery({
     queryKey: ['stats'],
     queryFn: fetchStats,
+    staleTime: 1000 * 60 * 5, // ✅ داده‌ها تا ۵ دقیقه تازه بمانند (از API مجدداً درخواست نمی‌کند)
+    refetchOnWindowFocus: false, // ✅ هنگام بازگشت به صفحه، درخواست مجدد ارسال نشود
+    refetchOnReconnect: false, // ✅ بعد از اتصال مجدد به اینترنت، داده‌ها کش شوند
   });
-
+    
   if (isLoading) return <p>Loading stats...</p>;
   if (error) return <p>Error loading stats</p>;
 

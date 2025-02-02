@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (userData?.email) {
       setUser(userData);
       setStoredUser(userData);
@@ -18,7 +18,7 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
     navigate('/');
   };
 

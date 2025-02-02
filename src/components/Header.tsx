@@ -5,12 +5,12 @@ import { APP_TITLE } from '../constants';
 
 const Header: React.FC = () => {
   const { isLoggedIn, logout, setUser, user } = useAuthStore();
-  const [storedUser, setStoredUser] = useState<{ username: string; role: string } | null>(null);
+  const [storedUser, setStoredUser] = useState<{ email: string; role: string } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    if (userData?.username) {
+    if (userData?.email) {
       setUser(userData);
       setStoredUser(userData);
     }
@@ -33,7 +33,7 @@ const Header: React.FC = () => {
       {isLoggedIn && (
         <div className="flex items-center space-x-4">
           <span className="font-semibold">
-            {storedUser?.username || user?.username || 'User'} ({storedUser?.role || user?.role || 'Guest'})
+            {storedUser?.email || user?.email || 'User'} ({storedUser?.role || user?.role || 'Guest'})
           </span>
           <button
             onClick={handleLogout}

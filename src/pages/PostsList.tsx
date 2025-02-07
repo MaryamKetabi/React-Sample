@@ -17,13 +17,13 @@ const PostsList: React.FC = () => {
   const { data: posts, isLoading, error } = useQuery<Post[], Error>({
     queryKey: ['posts'],
     queryFn: fetchPosts,
-    staleTime: 1000 * 60 * 3, // ✅ داده‌ها تا ۳ دقیقه تازه بمانند
-    gcTime: 1000 * 60 * 7,  // ✅ معادل جدید cacheTime (پاک‌سازی بعد از ۷ دقیقه)
+    staleTime: 1000 * 60 * 3, 
+    gcTime: 1000 * 60 * 7,  
   });
 
   if (isLoading) return <p>Loading posts...</p>;
   if (error) return <p>Error loading posts</p>;
-  if (!posts) return <p>No posts found.</p>; // ✅ بررسی مقدار posts قبل از map
+  if (!posts) return <p>No posts found.</p>; 
 
   return (
     <div className="p-8 bg-gray-100 flex-grow">

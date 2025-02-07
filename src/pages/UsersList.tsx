@@ -17,14 +17,14 @@ const UsersList: React.FC = () => {
   const { data: users, isLoading, error } = useQuery<User[], Error>({
     queryKey: ['users'],
     queryFn: fetchUsers,
-    staleTime: 1000 * 60 * 5, // ✅ داده‌ها تا ۵ دقیقه تازه بمانند
-    gcTime: 1000 * 60 * 10,  // ✅ معادل جدید cacheTime (پاک‌سازی بعد از ۱۰ دقیقه)
+    staleTime: 1000 * 60 * 5, 
+    gcTime: 1000 * 60 * 10,  
   });
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading users</p>;
-  if (!users) return <p>No users found.</p>; // ✅ بررسی مقدار users قبل از map
-
+  if (!users) return <p>No users found.</p>; 
+  
   return (
     <div className="p-8 bg-gray-100 flex-grow">
       <h1 className="text-3xl font-bold mb-6">Users</h1>

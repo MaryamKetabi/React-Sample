@@ -1,61 +1,77 @@
+// Import کتابخانه Zustand برای مدیریت state
 import { create } from 'zustand';
 
+// اینترفیس User: ساختار داده کاربر را تعریف می‌کند
 interface User {
   email: string;
-  role: string;
-  password: string;
+  role: string; // نقش کاربر (مثلا Admin یا User)
+  password: string; // بهتر است پسورد به صورت hash ذخیره شود
 }
 
+// اینترفیس AuthState: state کلی سیستم احراز هویت
 interface AuthState {
-  isLoggedIn: boolean;
-  user: User | null;
-  register: (email: string, password: string, role?: string) => boolean;
-  login: (email: string, password: string) => boolean;
-  logout: () => void;
-  setUser: (user: User) => void; // 
+  isLoggedIn: boolean; // وضعیت لاگین کاربر
+  user: User | null; // اطلاعات کاربر فعلی یا null
+  register: (email: string, password: string, role?: string) => boolean; // ثبت نام کاربر
+  login: (email: string, password: string) => boolean; // ورود کاربر
+  logout: () => void; // خروج کاربر
+  setUser: (user: User) => void; // آپدیت اطلاعات کاربر
 }
 
+// ایجاد store با Zustand
 const useAuthStore = create<AuthState>((set) => ({
-  isLoggedIn: !!localStorage.getItem('currentUser'),
-  user: localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!) : null,
+  // مقداردهی اولیه از localStorage
+  isLoggedIn: !!localStorage.getItem('currentUser'), // تبدیل مقدار به boolean
+  user: localStorage.getItem('currentUser')
+    ? JSON.parse(localStorage.getItem('currentUser')!) // ! برای اطمینان از عدم null بودن
+    : null,
 
+  // متد ثبت نام
   register: (email, password, role = 'User') => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const users = JSON.parse(localStorage.getItem('users') || '[]'); // دریافت لیست کاربران یا آرایه خالی
 
+    // بررسی تکراری نبودن ایمیل
     if (users.some((user: User) => user.email === email)) {
-      return false;
+      return false; // ایمیل تکراری
     }
 
+    // ایجاد کاربر جدید
     const newUser = { email, password, role };
     users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    localStorage.setItem('users', JSON.stringify(users)); // ذخیره در localStorage
+    localStorage.setItem('currentUser', JSON.stringify(newUser)); // ذخیره کاربر فعلی
 
+    // آپدیت state
     set({ isLoggedIn: true, user: newUser });
     return true;
   },
 
+  // متد ورود
   login: (email, password) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find((user: User) => user.email === email && user.password === password);
+    const user = users.find(
+      (user: User) => user.email === email && user.password === password
+    );
 
     if (!user) {
-      return false;
+      return false; // کاربر یافت نشد
     }
 
     localStorage.setItem('currentUser', JSON.stringify(user));
-    set({ isLoggedIn: true, user });
+    set({ isLoggedIn: true, user }); // آپدیت state
     return true;
   },
 
+  // متد خروج
   logout: () => {
     localStorage.removeItem('currentUser');
-    set({ isLoggedIn: false, user: null });
+    set({ isLoggedIn: false, user: null }); // ریست state
   },
 
-  setUser: (user) => { // ✅ اضافه کردن `setUser`
+  // آپدیت اطلاعات کاربر (مثلا بعد از ویرایش پروفایل)
+  setUser: (user) => {
     localStorage.setItem('currentUser', JSON.stringify(user));
-    set({ user });
+    set({ user }); // فقط user آپدیت می‌شود، isLoggedIn ثابت می‌ماند
   },
 }));
 

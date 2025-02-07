@@ -1,19 +1,15 @@
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
 import Header from './Header';
-
-const Sidebar = lazy(() => import('./Sidebar'));
 
 const Layout: React.FC = () => {
   return (
-    <div className="flex flex-col h-screen">
-      {/* Header ثابت در همه صفحات */}
-      <Header />
-      <div className="flex h-full">
-        <Suspense fallback={<div>Loading...</div>}>
-          <Sidebar />
-        </Suspense>
-        <main className="p-8 bg-gray-100 flex-grow min-h-screen">
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1 ml-64">
+        <Header />
+        <main className="p-8 mt-16">
           <Outlet />
         </main>
       </div>

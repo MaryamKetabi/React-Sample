@@ -25,39 +25,40 @@ const useAuthStore = create<AuthState>((set) => {
     user: parsedUser,
 
     register: (email, password, role = 'User') => {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-
+      const users = JSON.parse(localStorage.getItem('users') || '[]'); // دریافت لیست کاربران
+      
       if (users.some((user: User) => user.email === email)) {
-        return false; // ایمیل تکراری
+        return false; // اگر ایمیل تکراری باشد، ثبت‌نام جدیدی انجام نمی‌شود
       }
-
+    
       const newUser = { email, password, role };
       users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
-
-      set({ isLoggedIn: true, user: newUser });
+      localStorage.setItem('users', JSON.stringify(users)); // ذخیره کاربران
+      localStorage.setItem('currentUser', JSON.stringify(newUser)); // ذخیره کاربر لاگین‌شده
+    
+      set({ isLoggedIn: true, user: newUser }); // آپدیت Zustand Store
       return true;
     },
 
     login: (email, password) => {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const users = JSON.parse(localStorage.getItem('users') || '[]'); // دریافت لیست کاربران
+      
       const user = users.find(
         (user: User) => user.email === email && user.password === password
       );
-
+    
       if (!user) {
-        return false;
+        return false; // اگر کاربری یافت نشد، ورود انجام نمی‌شود
       }
-
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      set({ isLoggedIn: true, user });
+    
+      localStorage.setItem('currentUser', JSON.stringify(user)); // ذخیره اطلاعات ورود
+      set({ isLoggedIn: true, user }); // بروزرسانی Zustand Store
       return true;
     },
 
     logout: () => {
-      localStorage.removeItem('currentUser');
-      set({ isLoggedIn: false, user: null });
+      localStorage.removeItem('currentUser'); // حذف اطلاعات ورود
+      set({ isLoggedIn: false, user: null }); // آپدیت `state`
     },
 
     setUser: (user) => {

@@ -1,78 +1,70 @@
-// Import کتابخانه Zustand برای مدیریت state
 import { create } from 'zustand';
 
-// اینترفیس User: ساختار داده کاربر را تعریف می‌کند
 interface User {
   email: string;
-  role: string; // نقش کاربر (مثلا Admin یا User)
-  password: string; // بهتر است پسورد به صورت hash ذخیره شود
+  role: string;
+  password: string;
 }
 
-// اینترفیس AuthState: state کلی سیستم احراز هویت
 interface AuthState {
-  isLoggedIn: boolean; // وضعیت لاگین کاربر
-  user: User | null; // اطلاعات کاربر فعلی یا null
-  register: (email: string, password: string, role?: string) => boolean; // ثبت نام کاربر
-  login: (email: string, password: string) => boolean; // ورود کاربر
-  logout: () => void; // خروج کاربر
-  setUser: (user: User) => void; // آپدیت اطلاعات کاربر
+  isLoggedIn: boolean;
+  user: User | null;
+  register: (email: string, password: string, role?: string) => boolean;
+  login: (email: string, password: string) => boolean;
+  logout: () => void;
+  setUser: (user: User) => void;
 }
 
-// ایجاد store با Zustand
-const useAuthStore = create<AuthState>((set) => ({
-  // مقداردهی اولیه از localStorage
-  isLoggedIn: !!localStorage.getItem('currentUser'), // تبدیل مقدار به boolean
-  user: localStorage.getItem('currentUser')
-    ? JSON.parse(localStorage.getItem('currentUser')!) // ! برای اطمینان از عدم null بودن
-    : null,
+const useAuthStore = create<AuthState>((set) => {
+  // بررسی مقدار ذخیره‌شده در localStorage
+  const storedUser = localStorage.getItem('currentUser');
+  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-  // متد ثبت نام
-  register: (email, password, role = 'User') => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]'); // دریافت لیست کاربران یا آرایه خالی
+  return {
+    isLoggedIn: parsedUser !== null, // اگر `currentUser` در `localStorage` باشد، مقدار `true` بدهد
+    user: parsedUser,
 
-    // بررسی تکراری نبودن ایمیل
-    if (users.some((user: User) => user.email === email)) {
-      return false; // ایمیل تکراری
-    }
+    register: (email, password, role = 'User') => {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-    // ایجاد کاربر جدید
-    const newUser = { email, password, role };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users)); // ذخیره در localStorage
-    localStorage.setItem('currentUser', JSON.stringify(newUser)); // ذخیره کاربر فعلی
+      if (users.some((user: User) => user.email === email)) {
+        return false; // ایمیل تکراری
+      }
 
-    // آپدیت state
-    set({ isLoggedIn: true, user: newUser });
-    return true;
-  },
+      const newUser = { email, password, role };
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
 
-  // متد ورود
-  login: (email, password) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(
-      (user: User) => user.email === email && user.password === password
-    );
+      set({ isLoggedIn: true, user: newUser });
+      return true;
+    },
 
-    if (!user) {
-      return false; // کاربر یافت نشد
-    }
+    login: (email, password) => {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(
+        (user: User) => user.email === email && user.password === password
+      );
 
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    set({ isLoggedIn: true, user }); // آپدیت state
-    return true;
-  },
+      if (!user) {
+        return false;
+      }
 
-  // متد خروج
-  logout: () => {
-    localStorage.removeItem('currentUser');
-    set({ isLoggedIn: false, user: null }); // ریست state
-  },
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      set({ isLoggedIn: true, user });
+      return true;
+    },
 
-  // آپدیت اطلاعات کاربر (مثلا بعد از ویرایش پروفایل)
-  setUser: (user) => {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    set({ user }); // فقط user آپدیت می‌شود، isLoggedIn ثابت می‌ماند
-  },
-}));
+    logout: () => {
+      localStorage.removeItem('currentUser');
+      set({ isLoggedIn: false, user: null });
+    },
+
+    setUser: (user) => {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      set({ user });
+    },
+  };
+});
 
 export default useAuthStore;
